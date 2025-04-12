@@ -77,7 +77,7 @@ function App() {
   const [loansOwed, setLoansOwed] = useState<LoanState[]>([]);
   const [loansToCollect, setLoansToCollect] = useState<LoanState[]>([]);
   const [transactions, setTransactions] = useState<TransactionState[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   

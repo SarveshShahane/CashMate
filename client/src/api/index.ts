@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api'; // Replace with your actual API URL
-
+const API_URL="https://cashmate-6557.onrender.com/api"
 // Create axios instance with proper error handling
 const api = axios.create({
   baseURL: API_URL,
