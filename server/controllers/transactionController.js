@@ -10,6 +10,7 @@ exports.createTransaction = async (req, res) => {
     
     // Updated to match what client is sending
     const { amount, recipientId, description } = req.body;
+    const senderId = req.user._id; // Get sender's ID
     
     if (!amount || !recipientId) {
       return res.status(400).json({ message: 'Amount and recipient are required' });
@@ -26,10 +27,15 @@ exports.createTransaction = async (req, res) => {
     if (!recipient) {
       return res.status(404).json({ message: 'Recipient not found' });
     }
+
+    // Prevent user from creating a transaction to themselves
+    if (senderId.equals(recipient._id)) {
+      return res.status(400).json({ message: 'Cannot create a transaction to yourself.' });
+    }
     
     // Create the transaction
     const newTransaction = new Transaction({
-      sender: req.user._id,
+      sender: senderId,
       receiver: recipient._id,
       amount,
       description,
@@ -61,7 +67,7 @@ exports.getMyTransactions = async (req, res) => {
     })
       .populate('sender', 'name email') 
       .populate('receiver', 'name email')
-      .sort({ createdAt: -1 }); // Sort by newest first
+      .sort({ date: -1 }); // Sort by transaction date, newest first
 
     console.log(`Found ${transactions.length} transactions`);
     
@@ -75,18 +81,19 @@ exports.getMyTransactions = async (req, res) => {
 // 3. Get transactions with a specific user
 exports.getTransactionsForUser = async (req, res) => {
   try {
-    const { email } = req.params; // Get receiver's email from URL params
-    const userId = req.user._id;
+    const otherUserId = req.params.userId; // Get the other user's ID from URL params
+    const currentUserId = req.user._id; // ID of the current logged-in user
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    // Optional: Validate if the otherUserId corresponds to an existing user
+    const otherUser = await User.findById(otherUserId);
+    if (!otherUser) {
+      return res.status(404).json({ message: 'Specified user not found' });
     }
 
     const transactions = await Transaction.find({
       $or: [
-        { sender: userId, receiver: user._id },
-        { sender: user._id, receiver: userId },
+        { sender: currentUserId, receiver: otherUserId },
+        { sender: otherUserId, receiver: currentUserId },
       ],
     })
       .populate('sender', 'name email')

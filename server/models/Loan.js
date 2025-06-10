@@ -22,11 +22,9 @@ const loanSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'settled'],
     default: 'pending'
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
+}, {
+  timestamps: true
 });
 
 module.exports = mongoose.model('Loan', loanSchema);

@@ -15,9 +15,6 @@ router.post('/create', protect, createTransaction);
 // Add the base route to match client's call
 router.get('/', protect, getMyTransactions);
 
-// Keep existing route
-router.get('/all', protect, getMyTransactions);
-
 // Get transactions for a user
 router.get('/user/:userId', protect, getTransactionsForUser);
 

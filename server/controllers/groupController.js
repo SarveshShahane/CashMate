@@ -10,16 +10,12 @@ exports.getAllGroups = async (req, res) => {
       members: req.user.id
     }).populate('members', 'name email');
 
-    res.json({
-      success: true,
-      count: groups.length,
-      groups
-    });
+    res.json({ groups });
   } catch (err) {
     console.error('Error getting all groups:', err);
     res.status(500).json({ 
-      success: false, 
-      message: 'Server error getting groups' 
+      message: 'Server error getting groups',
+      error: err.message 
     });
   }
 };
@@ -28,6 +24,10 @@ exports.getAllGroups = async (req, res) => {
 exports.createGroup = async (req, res) => {
   const { name } = req.body;
   const userId = req.user.id;
+
+  if (!name) {
+    return res.status(400).json({ message: 'Group name is required' });
+  }
 
   try {
     const group = new Group({
@@ -42,15 +42,14 @@ exports.createGroup = async (req, res) => {
       .populate('members', 'name email');
 
     res.status(201).json({
-      success: true,
       message: 'Group created successfully',
       group: populatedGroup,
     });
   } catch (err) {
     console.error('Error creating group:', err);
     res.status(500).json({ 
-      success: false, 
-      message: 'Failed to create group' 
+      message: 'Failed to create group',
+      error: err.message 
     });
   }
 };
@@ -58,13 +57,17 @@ exports.createGroup = async (req, res) => {
 // Add User to Group
 exports.addUserToGroup = async (req, res) => {
   const { groupId, email } = req.body;
+  const currentUserId = req.user.id;
+
+  if (!groupId || !email) {
+    return res.status(400).json({ message: 'Group ID and user email are required' });
+  }
 
   try {
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ 
-        success: false,
         message: 'User not found with that email' 
       });
     }
@@ -72,15 +75,18 @@ exports.addUserToGroup = async (req, res) => {
     const group = await Group.findById(groupId);
     if (!group) {
       return res.status(404).json({ 
-        success: false,
         message: 'Group not found' 
       });
     }
 
-    // Check if user is already in the group
-    if (group.members.includes(user._id)) {
+    // Check if the current user is a member of the group
+    if (!group.members.some(memberId => memberId.equals(currentUserId))) {
+      return res.status(403).json({ message: 'Forbidden: You are not a member of this group.' });
+    }
+
+    // Check if user to be added is already in the group
+    if (group.members.some(memberId => memberId.equals(user._id))) {
       return res.status(400).json({ 
-        success: false,
         message: 'User already in the group' 
       });
     }
@@ -93,40 +99,48 @@ exports.addUserToGroup = async (req, res) => {
       .populate('members', 'name email');
     
     res.json({
-      success: true,
       message: 'User added to the group successfully',
       group: updatedGroup,
     });
   } catch (err) {
     console.error('Error adding user to group:', err);
     res.status(500).json({ 
-      success: false, 
-      message: 'Server error adding user to group' 
+      message: 'Server error adding user to group',
+      error: err.message 
     });
   }
 };
 
 // Remove User from Group
 exports.removeUserFromGroup = async (req, res) => {
-  const { groupId, userId } = req.body;
+  const { groupId, userId } = req.body; // userId is the ID of the user to be removed
+  const currentUserId = req.user.id; // ID of the user making the request
+
+  if (!groupId || !userId) {
+    return res.status(400).json({ message: 'Group ID and User ID are required' });
+  }
 
   try {
     const group = await Group.findById(groupId);
     if (!group) {
       return res.status(404).json({ 
-        success: false,
         message: 'Group not found' 
       });
     }
 
-    if (!group.members.includes(userId)) {
+    // Check if the current user is a member of the group
+    if (!group.members.some(memberId => memberId.equals(currentUserId))) {
+      return res.status(403).json({ message: 'Forbidden: You are not a member of this group.' });
+    }
+
+    // Check if the user to be removed is actually in the group
+    if (!group.members.some(memberId => memberId.equals(userId))) {
       return res.status(400).json({ 
-        success: false,
         message: 'User not in the group' 
       });
     }
 
-    group.members = group.members.filter(member => member.toString() !== userId);
+    group.members = group.members.filter(member => !member.equals(userId));
     await group.save();
     
     // Populate members details before sending response
@@ -134,15 +148,14 @@ exports.removeUserFromGroup = async (req, res) => {
       .populate('members', 'name email');
     
     res.json({
-      success: true,
       message: 'User removed from the group successfully',
       group: updatedGroup,
     });
   } catch (err) {
     console.error('Error removing user from group:', err);
     res.status(500).json({ 
-      success: false, 
-      message: 'Server error removing user from group' 
+      message: 'Server error removing user from group',
+      error: err.message 
     });
   }
 };
@@ -150,25 +163,27 @@ exports.removeUserFromGroup = async (req, res) => {
 // Get Group Details (Members & Transactions)
 exports.getGroupDetails = async (req, res) => {
   const { groupId } = req.params;
+  const currentUserId = req.user.id;
 
   try {
     const group = await Group.findById(groupId).populate('members', 'name email');
     if (!group) {
       return res.status(404).json({ 
-        success: false,
         message: 'Group not found' 
       });
     }
 
-    res.json({
-      success: true,
-      group
-    });
+    // Check if the current user is a member of the group
+    if (!group.members.some(memberId => memberId.equals(currentUserId))) {
+      return res.status(403).json({ message: 'Forbidden: You are not authorized to view this group.' });
+    }
+
+    res.json({ group });
   } catch (err) {
     console.error('Error getting group details:', err);
     res.status(500).json({ 
-      success: false, 
-      message: 'Server error retrieving group details' 
+      message: 'Server error retrieving group details',
+      error: err.message 
     });
   }
 };

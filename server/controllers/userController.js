@@ -11,10 +11,8 @@ exports.register = async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashed });
 
-    // Generate token for the new user - same as login
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
     
-    // Return the same response format as login
     res.status(201).json({ 
       token, 
       user: { 
@@ -24,7 +22,8 @@ exports.register = async (req, res) => {
       } 
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Register error:', err); // Log the detailed error
+    res.status(500).json({ message: 'Server error during registration', error: err.message });
   }
 };
 
@@ -38,14 +37,13 @@ exports.login = async (req, res) => {
     if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    // Fixed response to use _id instead of id to maintain consistency
     res.json({ token, user: { _id: user._id, name: user.name, email: user.email } });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Login error:', err); // Log the detailed error
+    res.status(500).json({ message: 'Server error during login', error: err.message });
   }
 };
 
-// Add a getCurrentUser endpoint to fetch user data
 exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -55,11 +53,11 @@ exports.getCurrentUser = async (req, res) => {
     
     res.json({ user });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Get current user error:', err); // Log the detailed error
+    res.status(500).json({ message: 'Server error fetching current user', error: err.message });
   }
 };
 
-// Add this function to userController.js
 exports.findUserByEmail = async (req, res) => {
   try {
     const { email } = req.query;
@@ -76,6 +74,7 @@ exports.findUserByEmail = async (req, res) => {
     
     res.json({ user });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    console.error('Find user by email error:', err); // Log the detailed error
+    res.status(500).json({ message: 'Server error finding user by email', error: err.message });
   }
 };
