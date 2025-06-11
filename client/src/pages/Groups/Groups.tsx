@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { groupApi, authApi } from '../../services/api';
-import { Group, User } from '../../types';
+import { groupApi } from '../../services/api';
+import { Group } from '../../types';
 import { useForm } from 'react-hook-form';
 import { 
   Plus, 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { groupApi, expenseApi, authApi } from '../../services/api';
-import { Group, Expense, User } from '../../types';
+import { groupApi, expenseApi } from '../../services/api';
+import { Group, Expense } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from 'react-hook-form';
 import { 
@@ -11,9 +11,7 @@ import {
   UserPlus,
   UserMinus,
   Receipt,
-  Calendar,
-  DollarSign,
-  Trash2
+  DollarSign
 } from 'lucide-react';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import Modal from '../../components/UI/Modal';
