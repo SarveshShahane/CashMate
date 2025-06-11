@@ -6,9 +6,9 @@ import {
   ArrowLeftRight, 
   Users, 
   Receipt, 
-  HandCoins, 
+  Banknote, // Changed from HandCoins to Banknote
   LogOut, 
-  User 
+  UserIcon 
 } from 'lucide-react';
 
 const Header: React.FC = () => {
@@ -20,7 +20,7 @@ const Header: React.FC = () => {
     { name: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
     { name: 'Groups', href: '/groups', icon: Users },
     { name: 'Expenses', href: '/expenses', icon: Receipt },
-    { name: 'Loans', href: '/loans', icon: HandCoins },
+    { name: 'Loans', href: '/loans', icon: Banknote }, // Changed from HandCoins to Banknote
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -63,7 +63,7 @@ const Header: React.FC = () => {
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <User className="w-5 h-5 text-gray-400" />
+              <UserIcon className="w-5 h-5 text-gray-400" />
               <span className="text-sm font-medium text-gray-700">{user?.name}</span>
             </div>
             <button

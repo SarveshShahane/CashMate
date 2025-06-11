@@ -6,7 +6,7 @@ import {
   ArrowUpRight, 
   ArrowDownLeft, 
   Receipt, 
-  HandCoins,
+  Banknote,
   TrendingUp,
   TrendingDown,
   DollarSign
@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
         setExpenses(expensesRes.data.expenses.slice(0, 5)); // Latest 5
         setLoans(loansRes.data.loans.slice(0, 5)); // Latest 5
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        // Silently handle error - no console logs
       } finally {
         setIsLoading(false);
       }
