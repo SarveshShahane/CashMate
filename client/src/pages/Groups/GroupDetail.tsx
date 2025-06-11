@@ -52,12 +52,7 @@ const GroupDetail: React.FC = () => {
     handleSubmit: handleExpenseSubmit,
     reset: resetExpense,
     formState: { errors: expenseErrors },
-  } = useForm<CreateExpenseForm>({
-    defaultValues: {
-      amount: 0,
-      description: '',
-    }
-  });
+  } = useForm<CreateExpenseForm>();
 
   useEffect(() => {
     if (groupId) {
@@ -118,7 +113,6 @@ const GroupDetail: React.FC = () => {
     }
   };
 
-  // Remove console.logs and improve error feedback
   const onCreateExpense = async (data: CreateExpenseForm) => {
     if (selectedMembers.length === 0) {
       toast.error('Please select at least one member to split the expense');
@@ -127,20 +121,14 @@ const GroupDetail: React.FC = () => {
 
     setIsCreatingExpense(true);
     try {
-      const response = await expenseApi.create(
-        groupId!, 
-        Number(data.amount), 
-        data.description, 
-        selectedMembers
-      );
-      
+      await expenseApi.create(groupId!, data.amount, data.description, selectedMembers);
       toast.success('Expense created successfully');
       setIsCreateExpenseModalOpen(false);
       resetExpense();
       setSelectedMembers(group?.members.map(m => m._id) || []);
       fetchGroupExpenses();
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Failed to create expense. Please try again.';
+      const message = error.response?.data?.message || 'Failed to create expense';
       toast.error(message);
     } finally {
       setIsCreatingExpense(false);
@@ -473,7 +461,6 @@ const GroupDetail: React.FC = () => {
                   value: 0.01,
                   message: 'Amount must be greater than 0',
                 },
-                valueAsNumber: true, // Ensure value is parsed as a number
               })}
               type="number"
               step="0.01"

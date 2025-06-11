@@ -34,8 +34,6 @@ api.interceptors.response.use(
       localStorage.removeItem('user');
       window.location.href = '/login';
     }
-    
-    // Remove all console logging entirely
     return Promise.reject(error);
   }
 );

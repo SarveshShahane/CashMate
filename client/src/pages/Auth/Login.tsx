@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   } = useForm<LoginForm>();
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/dashboard\" replace />;
   }
 
   const onSubmit = async (data: LoginForm) => {
@@ -108,7 +108,7 @@ const Login: React.FC = () => {
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <LoadingSpinner size="sm" className="mr-2" />
+                  <LoadingSpinner size="sm\" className="mr-2" />
                   Signing in...
                 </div>
               ) : (

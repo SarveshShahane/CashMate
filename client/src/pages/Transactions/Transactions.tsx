@@ -68,7 +68,6 @@ const Transactions: React.FC = () => {
     }
   };
 
-  // Improve error feedback for user
   const onCreateTransaction = async (data: TransactionForm) => {
     setIsCreating(true);
     try {
@@ -82,12 +81,8 @@ const Transactions: React.FC = () => {
       resetTransaction();
       fetchTransactions();
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        toast.error('User not found. Please check the email address.');
-      } else {
-        const message = error.response?.data?.message || 'Failed to create transaction';
-        toast.error(message);
-      }
+      const message = error.response?.data?.message || 'Failed to create transaction';
+      toast.error(message);
     } finally {
       setIsCreating(false);
     }

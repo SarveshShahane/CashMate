@@ -29,7 +29,6 @@ const Groups: React.FC = () => {
     register,
     handleSubmit,
     reset,
-    setError,
     formState: { errors },
   } = useForm<GroupForm>();
 
@@ -49,7 +48,6 @@ const Groups: React.FC = () => {
     }
   };
 
-  // Add better validation feedback
   const onCreateGroup = async (data: GroupForm) => {
     setIsCreating(true);
     try {
@@ -61,13 +59,6 @@ const Groups: React.FC = () => {
     } catch (error: any) {
       const message = error.response?.data?.message || 'Failed to create group';
       toast.error(message);
-      if (error.response?.status === 400) {
-        // Highlight the form field with an error
-        setError('name', {
-          type: 'manual',
-          message: 'Group name already exists or is invalid'
-        });
-      }
     } finally {
       setIsCreating(false);
     }

@@ -52,7 +52,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initAuth();
   }, []);
 
-  // Remove console logs and improve error handling
   const login = async (email: string, password: string) => {
     try {
       const response = await authApi.login(email, password);
@@ -64,7 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       toast.success('Welcome back!');
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Invalid email or password';
+      const message = error.response?.data?.message || 'Login failed';
       toast.error(message);
       throw error;
     }
@@ -81,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       toast.success('Account created successfully!');
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Registration failed. Please check your information.';
+      const message = error.response?.data?.message || 'Registration failed';
       toast.error(message);
       throw error;
     }

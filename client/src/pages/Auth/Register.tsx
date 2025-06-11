@@ -25,7 +25,7 @@ const Register: React.FC = () => {
   const password = watch('password');
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/dashboard\" replace />;
   }
 
   const onSubmit = async (data: RegisterForm) => {
@@ -112,13 +112,9 @@ const Register: React.FC = () => {
                 {...register('password', {
                   required: 'Password is required',
                   minLength: {
-                    value: 8,
-                    message: 'Password must be at least 8 characters',
+                    value: 6,
+                    message: 'Password must be at least 6 characters',
                   },
-                  pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-                    message: 'Password must include uppercase, lowercase, number and special character',
-                  }
                 })}
                 type="password"
                 className="input mt-1"
@@ -127,9 +123,6 @@ const Register: React.FC = () => {
               {errors.password && (
                 <p className="mt-1 text-sm text-danger-600">{errors.password.message}</p>
               )}
-              <p className="mt-1 text-xs text-gray-500">
-                Must be at least 8 characters and include uppercase, lowercase, number, and special character.
-              </p>
             </div>
             
             <div>
@@ -160,7 +153,7 @@ const Register: React.FC = () => {
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <LoadingSpinner size="sm" className="mr-2" />
+                  <LoadingSpinner size="sm\" className="mr-2" />
                   Creating account...
                 </div>
               ) : (

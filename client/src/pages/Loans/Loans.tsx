@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useForm } from 'react-hook-form';
 import { 
   Plus, 
-  Banknote, // Changed from HandCoins to Banknote
+  HandCoins, 
   TrendingUp,
   TrendingDown,
   CheckCircle,
@@ -54,7 +54,6 @@ const Loans: React.FC = () => {
     }
   };
 
-  // Improve error handling for user not found
   const onCreateLoan = async (data: LoanForm) => {
     setIsCreating(true);
     try {
@@ -62,24 +61,14 @@ const Loans: React.FC = () => {
       const userResponse = await authApi.searchUser(data.borrowerEmail);
       const borrower = userResponse.data.user;
 
-      if (borrower._id === user?._id) {
-        toast.error("You can't create a loan to yourself");
-        setIsCreating(false);
-        return;
-      }
-
       await loanApi.create(borrower._id, data.amount, data.reason);
       toast.success('Loan created successfully');
       setIsCreateModalOpen(false);
       reset();
       fetchLoans();
     } catch (error: any) {
-      if (error.response?.status === 404) {
-        toast.error('User not found. Please check the email address.');
-      } else {
-        const message = error.response?.data?.message || 'Failed to create loan';
-        toast.error(message);
-      }
+      const message = error.response?.data?.message || 'Failed to create loan';
+      toast.error(message);
     } finally {
       setIsCreating(false);
     }
@@ -221,7 +210,7 @@ const Loans: React.FC = () => {
       {/* Loans List */}
       {filteredLoans.length === 0 ? (
         <EmptyState
-          icon={<Banknote className="w-12 h-12" />} // Changed from HandCoins to Banknote
+          icon={<HandCoins className="w-12 h-12" />}
           title="No loans found"
           description="Create your first loan to start tracking money you lend or borrow."
           action={
