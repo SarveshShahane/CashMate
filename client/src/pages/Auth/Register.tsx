@@ -25,7 +25,7 @@ const Register: React.FC = () => {
   const password = watch('password');
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard\" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onSubmit = async (data: RegisterForm) => {
@@ -153,7 +153,7 @@ const Register: React.FC = () => {
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <LoadingSpinner size="sm\" className="mr-2" />
+                  <LoadingSpinner size="sm" className="mr-2" />
                   Creating account...
                 </div>
               ) : (

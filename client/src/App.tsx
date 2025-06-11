@@ -25,7 +25,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         
         {/* Protected Routes */}
-        <Route path="/" element={<Navigate to="/dashboard\" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route
           path="/dashboard"
           element={
@@ -88,7 +88,7 @@ function App() {
         />
         
         {/* Catch all route */}
-        <Route path="*" element={<Navigate to="/dashboard\" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </AuthProvider>
   );

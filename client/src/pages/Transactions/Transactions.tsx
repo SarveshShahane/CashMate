@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { transactionApi, authApi } from '../../services/api';
-import { Transaction, User } from '../../types';
+import { Transaction } from '../../types';
 import { useForm } from 'react-hook-form';
 import { 
   Plus, 
